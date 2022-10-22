@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from keyboard.client_cb import cancel_markup
+from database.bot_db import sql_command_insert
 
 class FSMAdmin(StatesGroup):
     id = State()
@@ -67,6 +68,7 @@ async def set_group(message: types.Message, state: FSMContext):
                              f"Направление: {data['direction']}\n"
                              f"Возраст: {data['age']}\n"
                              f"Группа: {data['group']}")
+    await sql_command_insert(state)
     await state.finish()
     await message.answer('Свободен')
 
@@ -87,3 +89,4 @@ def register_handlers_fsm(dp: Dispatcher):
     dp.register_message_handler(set_direction, state=FSMAdmin.direction)
     dp.register_message_handler(set_age, state=FSMAdmin.age)
     dp.register_message_handler(set_group, state=FSMAdmin.group)
+

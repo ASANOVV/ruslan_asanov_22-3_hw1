@@ -1,6 +1,6 @@
 from aiogram import types, Dispatcher
 from config import bot, dp
-
+import random
 async def echo(message: types.Message):
     if message.text.isnumeric():
         if len(message.text) > 3:
