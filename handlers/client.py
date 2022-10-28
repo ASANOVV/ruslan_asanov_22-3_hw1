@@ -4,10 +4,12 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import random
 from database.bot_db import sql_command_random
 from aiogram.dispatcher.filters import Text
+from keyboard.client_cb import start_markup
+from prser.NETFLIX import parser
 
 
 async def start_command(message: types.Message):
-    await message.answer(f'Здарова как поживаеш {message.from_user.full_name}')
+    await message.answer(f'Здарова как поживаеш {message.from_user.full_name}', reply_markup=start_markup)
 
 
 async def dice_game(message: types.Message):
@@ -61,6 +63,18 @@ async def get_random_mentor(message: types.Message):
     await sql_command_random(message)
 
 
+async def parse_news(message: types.Message):
+    items = parser()
+    for item in items:
+        await bot.send_message(message.chat.id,
+                               text=f"{item['link']}\n\n"
+                                    f"{item['title']}\n\n"
+                                    f"{item['time']}, "
+                                    f"#Y{item['day']}, "
+                                    f"#{item['year']}\n"
+                               )
+
+
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(start_command, commands=['start'])
     dp.register_message_handler(mem_command, commands=['mem'])
@@ -68,3 +82,4 @@ def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(dice_game, Text(startswith='game'))
     dp.register_message_handler(get_random_mentor, commands=['get'])
     dp.register_message_handler(pin_message, commands=['pin'], commands_prefix='!')
+    dp.register_message_handler(parse_news, commands=['news'])
